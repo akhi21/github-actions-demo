@@ -1,25 +1,25 @@
 name: CI workflow
 on:
     push:
+
 jobs:
-    build-and-push:
-        runs-on: ubuntu-latest # github-hosted runner
+    build-and-push:  # job ka naam
+        runs-on: ubuntu-latest # GitHub Runner (Free)
         steps:
-        - name: Checkout code
-          uses: actions/checkout@v4 # clone the code into ubuntu runner
-        
-        - name: Set up Docker
-          uses: docker/setup-buildx-action@v4 # set up Docker Buildx for building and pushing Docker images
+            - name: Checkout Code
+              uses: actions/checkout@v4 # clone the code into a ubuntu runner
 
-        - name: Log in to Docker Hub
-          uses: docker/login-action@v4 # log in to Docker Hub using credentials stored in GitHub Secrets
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            token: ${{ secrets.DOCKERHUB_TOKEN }}
+            - name: Setup Docker
+              uses: docker/setup-buildx-action@v4
 
-        - name: Build and push Docker image
-          uses: docker/build-push-action@v4 # build and push the Docker image to a registry
-          with:
-            context: ./backend # specify the build context (current directory)
-            push: true # push the image to the registry after building
-            tags: ${{ secrets.DOCKER_USERNAME }}/skillpulse-backend:latest # specify the image name and tag
+            - uses: docker/login-action@v4 # to authenticate
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            - name: Build and push
+              uses: docker/build-push-action@v7
+              with:
+                context: ./backend
+                push: true
+                tags: ${{ secrets.DOCKERHUB_USERNAME }}/skillpulse-backend:latest
